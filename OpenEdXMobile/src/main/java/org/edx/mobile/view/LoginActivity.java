@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -95,6 +97,40 @@ public class LoginActivity
             public void onClick(View v) {
                 // Check for Validation˜
                 callServerForLogin();
+            }
+        });
+
+        activityLoginBinding.emailEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                activityLoginBinding.usernameWrapper.setError(null);
+            }
+        });
+
+        activityLoginBinding.passwordEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                activityLoginBinding.passwordWrapper.setError(null);
             }
         });
 
@@ -227,12 +263,10 @@ public class LoginActivity
         final String passwordStr = activityLoginBinding.passwordEt.getText().toString().trim();
 
         if (activityLoginBinding.emailEt != null && emailStr.length() == 0) {
-            showAlertDialog(getString(R.string.login_error),
-                    getString(R.string.error_enter_email));
+            activityLoginBinding.usernameWrapper.setError(getString(R.string.error_enter_email));
             activityLoginBinding.emailEt.requestFocus();
         } else if (activityLoginBinding.passwordEt != null && passwordStr.length() == 0) {
-            showAlertDialog(getString(R.string.login_error),
-                    getString(R.string.error_enter_password));
+            activityLoginBinding.passwordWrapper.setError(getString(R.string.error_enter_password));
             activityLoginBinding.passwordEt.requestFocus();
         } else {
             activityLoginBinding.emailEt.setEnabled(false);
@@ -250,7 +284,7 @@ public class LoginActivity
                 @Override
                 public void onException(Exception ex) {
                     if (ex instanceof HttpStatusException &&
-                            ((HttpStatusException) ex).getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                            ((HttpStatusException) ex).getStatusCode() == HttpStatus.BAD_REQUEST) {
                         onUserLoginFailure(new LoginException(new LoginErrorMessage(
                                 getString(R.string.login_error),
                                 getString(R.string.login_failed))), null, null);
